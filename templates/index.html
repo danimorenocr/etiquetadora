@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Etiquetas</title>
+</head>
+<body>
+    <h1>Generador de Etiquetas</h1>
+    <form method="post">
+        <label>Fecha de Empaque (DD-MM-YYYY):</label>
+        <input type="text" name="fecha_empaque" required><br>
+        <label>Lote:</label>
+        <input type="text" name="lote" required><br>
+        
+        {% for i in range(1, 6) %}
+            <label>Peso (g) para etiqueta {{ i }}:</label>
+            <input type="number" name="peso_{{ i }}" min="1"><br>
+            <label>Cantidad:</label>
+            <input type="number" name="cantidad_{{ i }}" min="1"><br>
+        {% endfor %}
+        
+        <button type="submit">Generar PDF</button>
+    </form>
+</body>
+</html>
