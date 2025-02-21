@@ -4,6 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generador de Etiquetas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            width: 50%;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+        }
+        input {
+            width: 95%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .btn-remove {
+            background-color: #dc3545;
+            margin-left: 10px;
+        }
+        .btn-remove:hover {
+            background-color: #c82333;
+        }
+        #contenedor-etiquetas {
+            margin-top: 15px;
+        }
+        .etiqueta-box {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+    </style>
+    <script>
+        function agregarEtiqueta() {
+            let contenedor = document.getElementById("contenedor-etiquetas");
+            let index = contenedor.children.length + 1;
+
+            let div = document.createElement("div");
+            div.classList.add("etiqueta-box");
+            div.setAttribute("id", "etiqueta_" + index);
+            div.innerHTML = `
+                <label>Peso (g) para etiqueta ${index}:</label>
+                <input type="number" name="peso_${index}" min="1" required><br>
+                <label>Cantidad:</label>
+                <input type="number" name="cantidad_${index}" min="1" required><br>
+                <button type="button" class="btn-remove" onclick="eliminarEtiqueta(${index})">Eliminar</button>
+            `;
+            contenedor.appendChild(div);
+        }
+
+        function eliminarEtiqueta(index) {
+            let etiqueta = document.getElementById("etiqueta_" + index);
+            if (etiqueta) {
+                etiqueta.remove();
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Generador de Etiquetas</h1>
@@ -12,14 +101,17 @@
         <input type="text" name="fecha_empaque" required><br>
         <label>Lote:</label>
         <input type="text" name="lote" required><br>
-        
-        {% for i in range(1, 6) %}
-            <label>Peso (g) para etiqueta {{ i }}:</label>
-            <input type="number" name="peso_{{ i }}" min="1"><br>
-            <label>Cantidad:</label>
-            <input type="number" name="cantidad_{{ i }}" min="1"><br>
-        {% endfor %}
-        
+
+        <div id="contenedor-etiquetas">
+            <div class="etiqueta-box" id="etiqueta_1">
+                <label>Peso (g) para etiqueta 1:</label>
+                <input type="number" name="peso_1" min="1" required><br>
+                <label>Cantidad:</label>
+                <input type="number" name="cantidad_1" min="1" required><br>
+            </div>
+        </div>
+
+        <button type="button" onclick="agregarEtiqueta()">Agregar Etiqueta</button><br>
         <button type="submit">Generar PDF</button>
     </form>
 </body>
