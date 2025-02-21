@@ -48,40 +48,52 @@ def generate_pdf(etiquetas):
     return pdf_filename
 
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
+        fecha_empaque = request.form.get('fecha_empaque', '')  # Obtener fecha (evitar None)
+        print(f"Fecha recibida: {fecha_empaque}")  # <-- Depuración
         fecha_empaque = request.form['fecha_empaque']
         lote = request.form['lote']
         etiquetas = []
         
         try:
-            fecha_dt = datetime.strptime(fecha_empaque, "%d-%m-%Y")
+            # Convertir la fecha (se espera formato YYYY-MM-DD desde <input type="date">)
+            fecha_dt = datetime.strptime(fecha_empaque, "%Y-%m-%d")
+            fecha_formateada = fecha_dt.strftime("%d-%m-%Y")  # Convertir a DD-MM-YYYY
             fecha_vencimiento = fecha_dt + timedelta(days=30)
+            fecha_vencimiento_formateada = fecha_vencimiento.strftime("%d-%m-%Y")
         except ValueError:
-            return "Error: Formato de fecha incorrecto. Use DD-MM-YYYY"
-        
+            return f"Error: Formato de fecha incorrecto. Se recibió: {fecha_empaque}"
+
+
         for i in range(1, 6):
             peso = request.form.get(f'peso_{i}')
             cantidad = request.form.get(f'cantidad_{i}')
+
             if peso and cantidad:
-                for _ in range(int(cantidad)):
-                    etiquetas.append({
-                        'fecha': fecha_empaque,
-                        'vencimiento': fecha_vencimiento.strftime('%d-%m-%Y'),
-                        'lote': lote,
-                        'peso': peso
-                    })
-        
+                try:
+                    cantidad = int(cantidad)
+                    for _ in range(cantidad):
+                        etiquetas.append({
+                            'fecha': fecha_empaque,
+                            'vencimiento': fecha_vencimiento.strftime('%d-%m-%Y'),
+                            'lote': lote,
+                            'peso': peso
+                        })
+                except ValueError:
+                    return "Error: Cantidad debe ser un número entero válido."
+
         pdf_filename = generate_pdf(etiquetas)
-        
+
         return send_file(
             pdf_filename,
             as_attachment=True,
             download_name="etiquetas.pdf",
             mimetype="application/pdf"
         )
-    
+
     return render_template('index.html')
 
 if __name__ == '__main__':
