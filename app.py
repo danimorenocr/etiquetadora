@@ -32,7 +32,7 @@ def generate_pdf(etiquetas):
         y = y_start + row * (row_height + 5)  # **Posición vertical corregida**
 
         pdf.set_xy(x, y)  # Posiciona correctamente la etiqueta
-        pdf.multi_cell(col_width, 5, f"Carnes San Agustin\nEmpaque: {et['fecha']}\n"
+        pdf.multi_cell(col_width, 5, f"Carnes San Agustin\nEmpaque: {et['fecha_formateada']}\n"
                                       f"Vence: {et['vencimiento']}\nLote: {et['lote']}\n"
                                       f"Peso: {et['peso']}g", border=1, align="C")
 
@@ -78,7 +78,8 @@ def index():
                     for _ in range(cantidad):
                         etiquetas.append({
                             'fecha': fecha_empaque,
-                            'vencimiento': fecha_vencimiento.strftime('%d-%m-%Y'),
+                            'fecha_formateada': fecha_formateada,
+                            'vencimiento': fecha_vencimiento_formateada,
                             'lote': lote,
                             'peso': peso
                         })
